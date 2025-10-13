@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingotify Caller</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="board">
+      <header class="panel-heading">
+        <h1>Bingotify</h1>
+        <p>Select a number to call it and reveal its story.</p>
+      </header>
+      <div class="number-grid" id="numberGrid"></div>
+    </section>
+    <aside class="sidebar">
+      <header class="panel-heading">
+        <h2>Last Call</h2>
+      </header>
+      <article class="callout" id="callout">
+        <div class="callout-number" id="calloutNumber">—</div>
+        <div class="callout-story">
+          <section id="calloutCard" class="callout-card is-placeholder">
+            <h4 id="calloutTitle" class="callout-card-title"></h4>
+            <p id="calloutText" class="callout-card-text">Click a number on the board to see its anecdotes.</p>
+          </section>
+        </div>
+      </article>
+      <section class="called-list">
+        <h3>Called Numbers</h3>
+        <ul id="calledNumbers"></ul>
+      </section>
+    </aside>
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>
