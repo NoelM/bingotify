@@ -109,7 +109,7 @@ main.layout {
 }
 
 .callout-number {
-  font-size: 5rem;
+  font-size: 7rem;
   font-weight: 700;
   line-height: 1;
   color: #4338ca;
@@ -123,6 +123,7 @@ main.layout {
 .callout-card {
   display: grid;
   gap: 0.6rem;
+  margin-top: 0.75rem;
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;

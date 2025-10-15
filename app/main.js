@@ -1,86 +1,312 @@
 (() => {
   const TOTAL_NUMBERS = 75;
 
-  const DEFAULT_QUESTION = "Quel est le chef-lieu du département ?";
+  const CHEFLIEU_QUESTION = "Quel est le chef-lieu du département ?";
+  const DEPARTEMENT_QUESTION = "À quel département correspond ce numéro ?"
   const REVEAL_DELAY_MS = 10_000;
 
   // Base quiz data pour chaque département métropolitain.
   const baseStories = new Map([
-    [1, { title: "🐓 Ain", question: DEFAULT_QUESTION, answer: "Bourg-en-Bresse" }],
-    [2, { title: "🏺 Aisne", question: DEFAULT_QUESTION, answer: "Laon" }],
-    [3, { title: "🛁 Allier", question: DEFAULT_QUESTION, answer: "Moulins" }],
-    [4, { title: "🗻 Alpes-de-Haute-Provence", question: DEFAULT_QUESTION, answer: "Digne-les-Bains" }],
-    [5, { title: "🗻 Hautes-Alpes", question: DEFAULT_QUESTION, answer: "Gap" }],
-    [6, { title: "⛵️ Alpes-Maritimes", question: DEFAULT_QUESTION, answer: "Nice" }],
-    [7, { title: "🌰 Ardèche", question: DEFAULT_QUESTION, answer: "Privas" }],
-    [8, { title: "🌳 Ardennes", question: DEFAULT_QUESTION, answer: "Charleville-Mézières" }],
-    [9, { title: "🗻 Ariège", question: DEFAULT_QUESTION, answer: "Foix" }],
-    [10, { title: "👔 Aube", question: DEFAULT_QUESTION, answer: "Troyes" }],
-    [11, { title: "🌞 Aude", question: DEFAULT_QUESTION, answer: "Carcassonne" }],
-    [12, { title: "🧀 Aveyron", question: DEFAULT_QUESTION, answer: "Rodez" }],
-    [13, { title: "⚽️ Bouches-du-Rhône", question: DEFAULT_QUESTION, answer: "Marseille" }],
-    [14, { title: "🍏 Calvados", question: DEFAULT_QUESTION, answer: "Caen" }],
-    [15, { title: "🐄 Cantal", question: DEFAULT_QUESTION, answer: "Aurillac" }],
-    [16, { title: "🍇 Charente", question: DEFAULT_QUESTION, answer: "Angoulême" }],
-    [17, { title: "⚓️ Charente-Maritime", question: DEFAULT_QUESTION, answer: "La Rochelle" }],
-    [18, { title: "🌾 Cher", question: DEFAULT_QUESTION, answer: "Bourges" }],
-    [19, { title: "🌲 Corrèze", question: DEFAULT_QUESTION, answer: "Tulle" }],
-    [20, { title: "🏝️ Corse", question: DEFAULT_QUESTION, answer: "Ajaccio" }],
-    [21, { title: "🍇 Côte-d'Or", question: DEFAULT_QUESTION, answer: "Dijon" }],
-    [22, { title: "⚓️ Côtes-d'Armor", question: DEFAULT_QUESTION, answer: "Saint-Brieuc" }],
-    [23, { title: "🐑 Creuse", question: DEFAULT_QUESTION, answer: "Guéret" }],
-    [24, { title: "🍄 Dordogne", question: DEFAULT_QUESTION, answer: "Périgueux" }],
-    [25, { title: "🧀 Doubs", question: DEFAULT_QUESTION, answer: "Besançon" }],
-    [26, { title: "🌬️ Drôme", question: DEFAULT_QUESTION, answer: "Valence" }],
-    [27, { title: "🌿 Eure", question: DEFAULT_QUESTION, answer: "Évreux" }],
-    [28, { title: "⛪️ Eure-et-Loir", question: DEFAULT_QUESTION, answer: "Chartres" }],
-    [29, { title: "🌊 Finistère", question: DEFAULT_QUESTION, answer: "Quimper" }],
-    [30, { title: "🏛️ Gard", question: DEFAULT_QUESTION, answer: "Nîmes" }],
-    [31, { title: "✈️ Haute-Garonne", question: DEFAULT_QUESTION, answer: "Toulouse" }],
-    [32, { title: "🦆 Gers", question: DEFAULT_QUESTION, answer: "Auch" }],
-    [33, { title: "🍷 Gironde", question: DEFAULT_QUESTION, answer: "Bordeaux" }],
-    [34, { title: "🏖️ Hérault", question: DEFAULT_QUESTION, answer: "Montpellier" }],
-    [35, { title: "🏰 Ille-et-Vilaine", question: DEFAULT_QUESTION, answer: "Rennes" }],
-    [36, { title: "📚 Indre", question: DEFAULT_QUESTION, answer: "Châteauroux" }],
-    [37, { title: "🏞️ Indre-et-Loire", question: DEFAULT_QUESTION, answer: "Tours" }],
-    [38, { title: "⛰️ Isère", question: DEFAULT_QUESTION, answer: "Grenoble" }],
-    [39, { title: "🌲 Jura", question: DEFAULT_QUESTION, answer: "Lons-le-Saunier" }],
-    [40, { title: "🌾 Landes", question: DEFAULT_QUESTION, answer: "Mont-de-Marsan" }],
-    [41, { title: "🦁 Loir-et-Cher", question: DEFAULT_QUESTION, answer: "Blois" }],
-    [42, { title: "⚙️ Loire", question: DEFAULT_QUESTION, answer: "Saint-Étienne" }],
-    [43, { title: "🌄 Haute-Loire", question: DEFAULT_QUESTION, answer: "Le Puy-en-Velay" }],
-    [44, { title: "🌊 Loire-Atlantique", question: DEFAULT_QUESTION, answer: "Nantes" }],
-    [45, { title: "🌾 Loiret", question: DEFAULT_QUESTION, answer: "Orléans" }],
-    [46, { title: "🪨 Lot", question: DEFAULT_QUESTION, answer: "Cahors" }],
-    [47, { title: "🍑 Lot-et-Garonne", question: DEFAULT_QUESTION, answer: "Agen" }],
-    [48, { title: "🦌 Lozère", question: DEFAULT_QUESTION, answer: "Mende" }],
-    [49, { title: "🌼 Maine-et-Loire", question: DEFAULT_QUESTION, answer: "Angers" }],
-    [50, { title: "🌊 Manche", question: DEFAULT_QUESTION, answer: "Saint-Lô" }],
-    [51, { title: "🍾 Marne", question: DEFAULT_QUESTION, answer: "Châlons-en-Champagne" }],
-    [52, { title: "🏰 Haute-Marne", question: DEFAULT_QUESTION, answer: "Chaumont" }],
-    [53, { title: "🐄 Mayenne", question: DEFAULT_QUESTION, answer: "Laval" }],
-    [54, { title: "🏛️ Meurthe-et-Moselle", question: DEFAULT_QUESTION, answer: "Nancy" }],
-    [55, { title: "🌳 Meuse", question: DEFAULT_QUESTION, answer: "Bar-le-Duc" }],
-    [56, { title: "⛵️ Morbihan", question: DEFAULT_QUESTION, answer: "Vannes" }],
-    [57, { title: "⛏️ Moselle", question: DEFAULT_QUESTION, answer: "Metz" }],
-    [58, { title: "🌾 Nièvre", question: DEFAULT_QUESTION, answer: "Nevers" }],
-    [59, { title: "🏙️ Nord", question: DEFAULT_QUESTION, answer: "Lille" }],
-    [60, { title: "🌿 Oise", question: DEFAULT_QUESTION, answer: "Beauvais" }],
-    [61, { title: "🐎 Orne", question: DEFAULT_QUESTION, answer: "Alençon" }],
-    [62, { title: "⚓️ Pas-de-Calais", question: DEFAULT_QUESTION, answer: "Arras" }],
-    [63, { title: "🌋 Puy-de-Dôme", question: DEFAULT_QUESTION, answer: "Clermont-Ferrand" }],
-    [64, { title: "🏔️ Pyrénées-Atlantiques", question: DEFAULT_QUESTION, answer: "Pau" }],
-    [65, { title: "⛰️ Hautes-Pyrénées", question: DEFAULT_QUESTION, answer: "Tarbes" }],
-    [66, { title: "☀️ Pyrénées-Orientales", question: DEFAULT_QUESTION, answer: "Perpignan" }],
-    [67, { title: "🏰 Bas-Rhin", question: DEFAULT_QUESTION, answer: "Strasbourg" }],
-    [68, { title: "🍇 Haut-Rhin", question: DEFAULT_QUESTION, answer: "Colmar" }],
-    [69, { title: "🌉 Rhône", question: DEFAULT_QUESTION, answer: "Lyon" }],
-    [70, { title: "🌳 Haute-Saône", question: DEFAULT_QUESTION, answer: "Vesoul" }],
-    [71, { title: "🍷 Saône-et-Loire", question: DEFAULT_QUESTION, answer: "Mâcon" }],
-    [72, { title: "🏎️ Sarthe", question: DEFAULT_QUESTION, answer: "Le Mans" }],
-    [73, { title: "⛷️ Savoie", question: DEFAULT_QUESTION, answer: "Chambéry" }],
-    [74, { title: "🏞️ Haute-Savoie", question: DEFAULT_QUESTION, answer: "Annecy" }],
-    [75, { title: "🌆 Paris", question: DEFAULT_QUESTION, answer: "Paris" }],
+    [1, [
+      { title: "🐓 Ain", question: CHEFLIEU_QUESTION, answer: "Bourg-en-Bresse" },
+      { question: DEPARTEMENT_QUESTION, answer: "🐓 Ain" },
+    ]],
+    [2, [
+      { title: "🏺 Aisne", question: CHEFLIEU_QUESTION, answer: "Laon" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏺 Aisne" },
+    ]],
+    [3, [
+      { title: "🛁 Allier", question: CHEFLIEU_QUESTION, answer: "Moulins" },
+      { question: DEPARTEMENT_QUESTION, answer: "🛁 Allier" },
+    ]],
+    [4, [
+      { title: "🗻 Alpes-de-Haute-Provence", question: CHEFLIEU_QUESTION, answer: "Digne-les-Bains" },
+      { question: DEPARTEMENT_QUESTION, answer: "🗻 Alpes-de-Haute-Provence" },
+    ]],
+    [5, [
+      { title: "🗻 Hautes-Alpes", question: CHEFLIEU_QUESTION, answer: "Gap" },
+      { question: DEPARTEMENT_QUESTION, answer: "🗻 Hautes-Alpes" },
+    ]],
+    [6, [
+      { title: "⛵️ Alpes-Maritimes", question: CHEFLIEU_QUESTION, answer: "Nice" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛵️ Alpes-Maritimes" },
+    ]],
+    [7, [
+      { title: "🌰 Ardèche", question: CHEFLIEU_QUESTION, answer: "Privas" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌰 Ardèche" },
+    ]],
+    [8, [
+      { title: "🌳 Ardennes", question: CHEFLIEU_QUESTION, answer: "Charleville-Mézières" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌳 Ardennes" },
+    ]],
+    [9, [
+      { title: "🗻 Ariège", question: CHEFLIEU_QUESTION, answer: "Foix" },
+      { question: DEPARTEMENT_QUESTION, answer: "🗻 Ariège" },
+    ]],
+    [10, [
+      { title: "👔 Aube", question: CHEFLIEU_QUESTION, answer: "Troyes" },
+      { question: DEPARTEMENT_QUESTION, answer: "👔 Aube" },
+    ]],
+    [11, [
+      { title: "🌞 Aude", question: CHEFLIEU_QUESTION, answer: "Carcassonne" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌞 Aude" },
+    ]],
+    [12, [
+      { title: "🧀 Aveyron", question: CHEFLIEU_QUESTION, answer: "Rodez" },
+      { question: DEPARTEMENT_QUESTION, answer: "🧀 Aveyron" },
+    ]],
+    [13, [
+      { title: "⚽️ Bouches-du-Rhône", question: CHEFLIEU_QUESTION, answer: "Marseille" },
+      { question: DEPARTEMENT_QUESTION, answer: "⚽️ Bouches-du-Rhône" },
+    ]],
+    [14, [
+      { title: "🍏 Calvados", question: CHEFLIEU_QUESTION, answer: "Caen" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍏 Calvados" },
+    ]],
+    [15, [
+      { title: "🐄 Cantal", question: CHEFLIEU_QUESTION, answer: "Aurillac" },
+      { question: DEPARTEMENT_QUESTION, answer: "🐄 Cantal" },
+    ]],
+    [16, [
+      { title: "🍇 Charente", question: CHEFLIEU_QUESTION, answer: "Angoulême" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍇 Charente" },
+    ]],
+    [17, [
+      { title: "⚓️ Charente-Maritime", question: CHEFLIEU_QUESTION, answer: "La Rochelle" },
+      { question: DEPARTEMENT_QUESTION, answer: "⚓️ Charente-Maritime" },
+    ]],
+    [18, [
+      { title: "🌾 Cher", question: CHEFLIEU_QUESTION, answer: "Bourges" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌾 Cher" },
+    ]],
+    [19, [
+      { title: "🌲 Corrèze", question: CHEFLIEU_QUESTION, answer: "Tulle" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌲 Corrèze" },
+    ]],
+    [20, [
+      { title: "🏝️ Corse", question: CHEFLIEU_QUESTION, answer: "Ajaccio" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏝️ Corse" },
+    ]],
+    [21, [
+      { title: "🍇 Côte-d'Or", question: CHEFLIEU_QUESTION, answer: "Dijon" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍇 Côte-d'Or" },
+    ]],
+    [22, [
+      { title: "⚓️ Côtes-d'Armor", question: CHEFLIEU_QUESTION, answer: "Saint-Brieuc" },
+      { question: DEPARTEMENT_QUESTION, answer: "⚓️ Côtes-d'Armor" },
+    ]],
+    [23, [
+      { title: "🐑 Creuse", question: CHEFLIEU_QUESTION, answer: "Guéret" },
+      { question: DEPARTEMENT_QUESTION, answer: "🐑 Creuse" },
+    ]],
+    [24, [
+      { title: "🍄 Dordogne", question: CHEFLIEU_QUESTION, answer: "Périgueux" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍄 Dordogne" },
+    ]],
+    [25, [
+      { title: "🧀 Doubs", question: CHEFLIEU_QUESTION, answer: "Besançon" },
+      { question: DEPARTEMENT_QUESTION, answer: "🧀 Doubs" },
+    ]],
+    [26, [
+      { title: "🌬️ Drôme", question: CHEFLIEU_QUESTION, answer: "Valence" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌬️ Drôme" },
+    ]],
+    [27, [
+      { title: "🌿 Eure", question: CHEFLIEU_QUESTION, answer: "Évreux" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌿 Eure" },
+    ]],
+    [28, [
+      { title: "⛪️ Eure-et-Loir", question: CHEFLIEU_QUESTION, answer: "Chartres" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛪️ Eure-et-Loir" },
+    ]],
+    [29, [
+      { title: "🌊 Finistère", question: CHEFLIEU_QUESTION, answer: "Quimper" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌊 Finistère" },
+    ]],
+    [30, [
+      { title: "🏛️ Gard", question: CHEFLIEU_QUESTION, answer: "Nîmes" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏛️ Gard" },
+    ]],
+    [31, [
+      { title: "✈️ Haute-Garonne", question: CHEFLIEU_QUESTION, answer: "Toulouse" },
+      { question: DEPARTEMENT_QUESTION, answer: "✈️ Haute-Garonne" },
+    ]],
+    [32, [
+      { title: "🦆 Gers", question: CHEFLIEU_QUESTION, answer: "Auch" },
+      { question: DEPARTEMENT_QUESTION, answer: "🦆 Gers" },
+    ]],
+    [33, [
+      { title: "🍷 Gironde", question: CHEFLIEU_QUESTION, answer: "Bordeaux" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍷 Gironde" },
+    ]],
+    [34, [
+      { title: "🏖️ Hérault", question: CHEFLIEU_QUESTION, answer: "Montpellier" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏖️ Hérault" },
+    ]],
+    [35, [
+      { title: "🏰 Ille-et-Vilaine", question: CHEFLIEU_QUESTION, answer: "Rennes" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏰 Ille-et-Vilaine" },
+    ]],
+    [36, [
+      { title: "📚 Indre", question: CHEFLIEU_QUESTION, answer: "Châteauroux" },
+      { question: DEPARTEMENT_QUESTION, answer: "📚 Indre" },
+    ]],
+    [37, [
+      { title: "🏞️ Indre-et-Loire", question: CHEFLIEU_QUESTION, answer: "Tours" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏞️ Indre-et-Loire" },
+    ]],
+    [38, [
+      { title: "⛰️ Isère", question: CHEFLIEU_QUESTION, answer: "Grenoble" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛰️ Isère" },
+    ]],
+    [39, [
+      { title: "🌲 Jura", question: CHEFLIEU_QUESTION, answer: "Lons-le-Saunier" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌲 Jura" },
+    ]],
+    [40, [
+      { title: "🌾 Landes", question: CHEFLIEU_QUESTION, answer: "Mont-de-Marsan" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌾 Landes" },
+    ]],
+    [41, [
+      { title: "🦁 Loir-et-Cher", question: CHEFLIEU_QUESTION, answer: "Blois" },
+      { question: DEPARTEMENT_QUESTION, answer: "🦁 Loir-et-Cher" },
+    ]],
+    [42, [
+      { title: "⚙️ Loire", question: CHEFLIEU_QUESTION, answer: "Saint-Étienne" },
+      { question: DEPARTEMENT_QUESTION, answer: "⚙️ Loire" },
+    ]],
+    [43, [
+      { title: "🌄 Haute-Loire", question: CHEFLIEU_QUESTION, answer: "Le Puy-en-Velay" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌄 Haute-Loire" },
+    ]],
+    [44, [
+      { title: "🌊 Loire-Atlantique", question: CHEFLIEU_QUESTION, answer: "Nantes" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌊 Loire-Atlantique" },
+    ]],
+    [45, [
+      { title: "🌾 Loiret", question: CHEFLIEU_QUESTION, answer: "Orléans" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌾 Loiret" },
+    ]],
+    [46, [
+      { title: "🪨 Lot", question: CHEFLIEU_QUESTION, answer: "Cahors" },
+      { question: DEPARTEMENT_QUESTION, answer: "🪨 Lot" },
+    ]],
+    [47, [
+      { title: "🍑 Lot-et-Garonne", question: CHEFLIEU_QUESTION, answer: "Agen" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍑 Lot-et-Garonne" },
+    ]],
+    [48, [
+      { title: "🦌 Lozère", question: CHEFLIEU_QUESTION, answer: "Mende" },
+      { question: DEPARTEMENT_QUESTION, answer: "🦌 Lozère" },
+    ]],
+    [49, [
+      { title: "🌼 Maine-et-Loire", question: CHEFLIEU_QUESTION, answer: "Angers" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌼 Maine-et-Loire" },
+    ]],
+    [50, [
+      { title: "🌊 Manche", question: CHEFLIEU_QUESTION, answer: "Saint-Lô" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌊 Manche" },
+    ]],
+    [51, [
+      { title: "🍾 Marne", question: CHEFLIEU_QUESTION, answer: "Châlons-en-Champagne" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍾 Marne" },
+    ]],
+    [52, [
+      { title: "🏰 Haute-Marne", question: CHEFLIEU_QUESTION, answer: "Chaumont" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏰 Haute-Marne" },
+    ]],
+    [53, [
+      { title: "🐄 Mayenne", question: CHEFLIEU_QUESTION, answer: "Laval" },
+      { question: DEPARTEMENT_QUESTION, answer: "🐄 Mayenne" },
+    ]],
+    [54, [
+      { title: "🏛️ Meurthe-et-Moselle", question: CHEFLIEU_QUESTION, answer: "Nancy" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏛️ Meurthe-et-Moselle" },
+    ]],
+    [55, [
+      { title: "🌳 Meuse", question: CHEFLIEU_QUESTION, answer: "Bar-le-Duc" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌳 Meuse" },
+    ]],
+    [56, [
+      { title: "⛵️ Morbihan", question: CHEFLIEU_QUESTION, answer: "Vannes" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛵️ Morbihan" },
+    ]],
+    [57, [
+      { title: "⛏️ Moselle", question: CHEFLIEU_QUESTION, answer: "Metz" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛏️ Moselle" },
+    ]],
+    [58, [
+      { title: "🌾 Nièvre", question: CHEFLIEU_QUESTION, answer: "Nevers" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌾 Nièvre" },
+    ]],
+    [59, [
+      { title: "🏙️ Nord", question: CHEFLIEU_QUESTION, answer: "Lille" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏙️ Nord" },
+    ]],
+    [60, [
+      { title: "🌿 Oise", question: CHEFLIEU_QUESTION, answer: "Beauvais" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌿 Oise" },
+    ]],
+    [61, [
+      { title: "🐎 Orne", question: CHEFLIEU_QUESTION, answer: "Alençon" },
+      { question: DEPARTEMENT_QUESTION, answer: "🐎 Orne" },
+    ]],
+    [62, [
+      { title: "⚓️ Pas-de-Calais", question: CHEFLIEU_QUESTION, answer: "Arras" },
+      { question: DEPARTEMENT_QUESTION, answer: "⚓️ Pas-de-Calais" },
+    ]],
+    [63, [
+      { title: "🌋 Puy-de-Dôme", question: CHEFLIEU_QUESTION, answer: "Clermont-Ferrand" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌋 Puy-de-Dôme" },
+    ]],
+    [64, [
+      { title: "🏔️ Pyrénées-Atlantiques", question: CHEFLIEU_QUESTION, answer: "Pau" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏔️ Pyrénées-Atlantiques" },
+    ]],
+    [65, [
+      { title: "⛰️ Hautes-Pyrénées", question: CHEFLIEU_QUESTION, answer: "Tarbes" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛰️ Hautes-Pyrénées" },
+    ]],
+    [66, [
+      { title: "☀️ Pyrénées-Orientales", question: CHEFLIEU_QUESTION, answer: "Perpignan" },
+      { question: DEPARTEMENT_QUESTION, answer: "☀️ Pyrénées-Orientales" },
+    ]],
+    [67, [
+      { title: "🏰 Bas-Rhin", question: CHEFLIEU_QUESTION, answer: "Strasbourg" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏰 Bas-Rhin" },
+    ]],
+    [68, [
+      { title: "🍇 Haut-Rhin", question: CHEFLIEU_QUESTION, answer: "Colmar" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍇 Haut-Rhin" },
+    ]],
+    [69, [
+      { title: "🌉 Rhône", question: CHEFLIEU_QUESTION, answer: "Lyon" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌉 Rhône" },
+    ]],
+    [70, [
+      { title: "🌳 Haute-Saône", question: CHEFLIEU_QUESTION, answer: "Vesoul" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌳 Haute-Saône" },
+    ]],
+    [71, [
+      { title: "🍷 Saône-et-Loire", question: CHEFLIEU_QUESTION, answer: "Mâcon" },
+      { question: DEPARTEMENT_QUESTION, answer: "🍷 Saône-et-Loire" },
+    ]],
+    [72, [
+      { title: "🏎️ Sarthe", question: CHEFLIEU_QUESTION, answer: "Le Mans" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏎️ Sarthe" },
+    ]],
+    [73, [
+      { title: "⛷️ Savoie", question: CHEFLIEU_QUESTION, answer: "Chambéry" },
+      { question: DEPARTEMENT_QUESTION, answer: "⛷️ Savoie" },
+    ]],
+    [74, [
+      { title: "🏞️ Haute-Savoie", question: CHEFLIEU_QUESTION, answer: "Annecy" },
+      { question: DEPARTEMENT_QUESTION, answer: "🏞️ Haute-Savoie" },
+    ]],
+    [75, [
+      { title: "🌆 Paris", question: CHEFLIEU_QUESTION, answer: "Paris" },
+      { question: DEPARTEMENT_QUESTION, answer: "🌆 Paris" },
+    ]],
   ]);
 
   const storyRecords = new Map();
@@ -96,7 +322,7 @@
       storyRecords.set(number, [
         {
           title: `Numéro ${number}`,
-          question: DEFAULT_QUESTION,
+          question: CHEFLIEU_QUESTION,
           answer: "Ajoutez un chef-lieu pour ce numéro dans app/main.js.",
         },
       ]);
@@ -289,7 +515,7 @@
     calloutHeader.textContent = story?.title ?? `Numéro ${activeNumber}`;
     calloutCard.classList.remove("is-placeholder");
     calloutTitle.textContent = "Question";
-    calloutQuestion.textContent = story?.question ?? DEFAULT_QUESTION;
+    calloutQuestion.textContent = story?.question ?? CHEFLIEU_QUESTION;
     const answerText = story?.answer ?? "Réponse à compléter.";
     calloutAnswer.textContent = `Réponse : ${answerText}`;
     calloutAnswer.setAttribute("aria-hidden", "true");

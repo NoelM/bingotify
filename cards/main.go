@@ -128,6 +128,14 @@ func generateStrip() []int {
 		}
 	}
 
+	numberUnicty := make(map[int]bool)
+	for _, number := range strip {
+		if numberUnicty[number] {
+			panic(fmt.Sprintf("number %d found twice!!!!", number))
+		}
+		numberUnicty[number] = true
+	}
+
 	return strip
 }
 
