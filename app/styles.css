@@ -122,7 +122,7 @@ main.layout {
 
 .callout-card {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.6rem;
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
@@ -145,10 +145,46 @@ main.layout {
   color: #1a1f36;
 }
 
-.callout-card-text {
+.callout-card-question,
+.callout-card-answer {
   margin: 0;
   color: #39425d;
   line-height: 1.5;
+}
+
+.callout-card-answer {
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.callout-card.answer-revealed .callout-card-answer {
+  opacity: 1;
+}
+
+.callout-progress {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.15);
+  overflow: hidden;
+}
+
+.callout-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  transition: width 0.1s linear;
+}
+
+.callout-card.is-placeholder .callout-progress,
+.callout-card.is-placeholder .callout-card-question {
+  display: none;
+}
+
+.callout-card.is-placeholder .callout-card-answer {
+  display: block;
+  opacity: 1;
 }
 
 .called-list {
