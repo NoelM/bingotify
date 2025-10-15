@@ -12,6 +12,7 @@ import (
 	svg "github.com/ajstarks/svgo"
 )
 
+const NumberOfStrips = 5
 const StripLen = 75
 const CardsPerStrip = 5
 const NumbersPerCard = StripLen / CardsPerStrip
@@ -22,8 +23,7 @@ const NumbersPerLine = NumbersPerCard / LinePerCard
 var ReplacedCount int
 
 func main() {
-	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-	strips := generateStrips(100, rnd)
+	strips := generateStrips(NumberOfStrips)
 
 	file, err := os.Create("strips.txt")
 	if err != nil {
@@ -39,16 +39,36 @@ func main() {
 				file.WriteString("\n")
 			}
 
-			file.WriteString(fmt.Sprintf("%2d ", num))
+			fmt.Fprint(file, "%2d ", num)
 		}
 
 		file.WriteString("\n")
 	}
-	//generateCards(0, strips[0])
+
+	for stripId := range NumberOfStrips {
+		generateCards(stripId, strips[stripId])
+	}
+}
+
+func generateStrips(numberOfStrips int) [][]int {
+	strips := make([][]int, numberOfStrips)
+
+	for i := range numberOfStrips {
+		strips[i] = generateStrip()
+	}
+
+	for {
+		fmt.Println("unicity")
+		if ok := verifyUnicity(strips); !ok {
+			break
+		}
+	}
+
+	return strips
 }
 
 func generateStrip() []int {
-	rnd := rand.New(rand.NewSource(time.Now().UnixMilli()))
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	cards := make([][][]int, CardsPerStrip)
 	for cardId := range cards {
@@ -131,7 +151,7 @@ func generateStrip() []int {
 	numberUnicty := make(map[int]bool)
 	for _, number := range strip {
 		if numberUnicty[number] {
-			panic(fmt.Sprintf("number %d found twice!!!!", number))
+			panic(fmt.Sprintf("PANIC 🫨: number %d found twice!!!!", number))
 		}
 		numberUnicty[number] = true
 	}
@@ -154,23 +174,6 @@ func verifyUnicity(strips [][]int) bool {
 	return hasBeenEqual
 }
 
-func generateStrips(numberOfStrips int, rnd *rand.Rand) [][]int {
-	strips := make([][]int, numberOfStrips)
-
-	for i := range numberOfStrips {
-		strips[i] = generateStrip()
-	}
-
-	for {
-		fmt.Println("unicity")
-		if ok := verifyUnicity(strips); !ok {
-			break
-		}
-	}
-
-	return strips
-}
-
 func generateCards(stripId int, strip []int) {
 	out, err := os.Create(fmt.Sprintf("strip_%03d.svg", stripId))
 	if err != nil {
@@ -178,7 +181,7 @@ func generateCards(stripId int, strip []int) {
 	}
 	defer out.Close()
 
-	width, height := 2480, 3508
+	width, height := 2480, 3500
 
 	canvas := svg.New(out)
 	canvas.Start(width, height)
@@ -186,18 +189,14 @@ func generateCards(stripId int, strip []int) {
 	hMargin := 100
 	vMargin := 50
 	rectWidth := width - 2*hMargin
-	rectHeight := height/5 - 2*vMargin
+	rectHeight := (height-2*vMargin)/CardsPerStrip - 2*vMargin
 
-	numbersPerCard := 15
-	numberOfCards := len(strip) / numbersPerCard
+	canvas.Text(hMargin, vMargin+30, fmt.Sprintf("🎰 Bingotify — Strip #%d", stripId), "font-family:sans-serif; font-size:50pt; text-anchor:left; dominant-baseline:middle")
 
-	numberOfLines := 3
-	numberPerLine := 8
-
-	for cardId := range numberOfCards {
+	for cardId := range CardsPerStrip {
 		canvas.CenterRect(
 			width/2,
-			cardId*height/numberOfCards+height/(2*numberOfCards),
+			2*vMargin+(height-2*vMargin)/(2*CardsPerStrip)+cardId*(height-2*vMargin)/CardsPerStrip,
 			rectWidth,
 			rectHeight,
 			"rx:50;ry:50;fill:none;stroke:black;stroke-width:5;vector-effect:non-scaling-stroke",
@@ -205,7 +204,7 @@ func generateCards(stripId int, strip []int) {
 
 		canvas.CenterRect(
 			width/2,
-			cardId*height/numberOfCards+height/(2*numberOfCards),
+			2*vMargin+(height-2*vMargin)/(2*CardsPerStrip)+cardId*(height-2*vMargin)/CardsPerStrip,
 			rectWidth+16,
 			rectHeight+16,
 			"rx:55;ry:55;fill:none;stroke:black;stroke-width:2;vector-effect:non-scaling-stroke",
@@ -213,26 +212,26 @@ func generateCards(stripId int, strip []int) {
 
 		canvas.CenterRect(
 			width/2,
-			cardId*height/numberOfCards+height/(2*numberOfCards),
+			2*vMargin+(height-2*vMargin)/(2*CardsPerStrip)+cardId*(height-2*vMargin)/CardsPerStrip,
 			rectWidth+30,
 			rectHeight+30,
 			"rx:60;ry:60;fill:none;stroke:black;stroke-width:5;vector-effect:non-scaling-stroke",
 		)
 
-		card := strip[cardId*numbersPerCard : (cardId+1)*numbersPerCard]
+		card := strip[cardId*NumbersPerCard : (cardId+1)*NumbersPerCard]
 		numberId := 0
 
 		for lineId := range 3 {
 			for colId := range 8 {
-				xpos := hMargin + rectWidth/(2*numberPerLine) + rectWidth/numberPerLine*colId
-				ypos := vMargin + 2*vMargin*cardId + rectHeight*cardId + rectHeight/(2*numberOfLines) + rectHeight/numberOfLines*lineId
+				xpos := hMargin + rectWidth/(2*ColsPerCard) + rectWidth/ColsPerCard*colId
+				ypos := 3*vMargin + 2*vMargin*cardId + rectHeight*cardId + rectHeight/(2*LinePerCard) + rectHeight/LinePerCard*lineId
 
 				if numberId == 15 || card[numberId]/10 != colId {
-					canvas.CenterRect(xpos, ypos, rectWidth/numberPerLine-20, rectHeight/numberOfLines-20,
+					canvas.CenterRect(xpos, ypos, rectWidth/ColsPerCard-20, rectHeight/LinePerCard-20,
 						"rx:40;ry:40;fill:none;stroke:black;stroke-width:1;vector-effect:non-scaling-stroke")
 					continue
 				} else {
-					canvas.CenterRect(xpos, ypos, rectWidth/numberPerLine-20, rectHeight/numberOfLines-20,
+					canvas.CenterRect(xpos, ypos, rectWidth/ColsPerCard-20, rectHeight/LinePerCard-20,
 						"rx:40;ry:40;fill:black;opacity:0.1;stroke:black;stroke-width:1;vector-effect:non-scaling-stroke")
 					canvas.Text(xpos, ypos, fmt.Sprintf("%d", card[numberId]), "font-family:sans-serif; font-size:50pt; text-anchor:middle; dominant-baseline:middle")
 					numberId += 1
